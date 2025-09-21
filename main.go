@@ -1,6 +1,7 @@
 package main
 
 import (
+	"flag"
 	"fmt"
 	"os"
 
@@ -10,15 +11,17 @@ import (
 func main() {
 	args := os.Args
 	if len(args) < 2 {
-		fmt.Println("Usage: larry <message> <major|minor|patch>")
+		fmt.Println("Usage: larry increment <major|minor|patch>")
 		os.Exit(1)
 	}
 
-	message := args[1]
+	messagePtr := flag.String("m", "", "message for the tag")
+	flag.Parse()
+
 	action := args[2]
 
 	if action != "major" && action != "minor" && action != "patch" {
-		fmt.Println("Usage: larry <message> <major|minor|patch>")
+		fmt.Println("Usage: larry increment <major|minor|patch>")
 		os.Exit(1)
 	}
 
@@ -28,11 +31,11 @@ func main() {
 	tag := tags.LastTag()
 	switch action {
 	case "major":
-		tag.IncrementMajor(message, commit)
+		tag.IncrementMajor(*messagePtr, commit)
 	case "minor":
-		tag.IncrementMinor(message, commit)
+		tag.IncrementMinor(*messagePtr, commit)
 	case "patch":
-		tag.IncrementPatch(message, commit)
+		tag.IncrementPatch(*messagePtr, commit)
 	}
 
 	fmt.Println(tag.String())

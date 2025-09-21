@@ -49,6 +49,7 @@ Run Larry from within a Git repository:
 ```
 
 This will output:
+
 - The incremented patch version of the last tag
 - The short hash of the last commit
 
@@ -77,7 +78,6 @@ larry/
 ├── go.mod               # Go module definition
 └── go.sum               # Go module checksums
 ```
-
 
 ## License
 
