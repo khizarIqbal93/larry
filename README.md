@@ -9,13 +9,16 @@ Larry is a command-line utility that helps developers manage Git tags and versio
 - Retrieve the last commit hash from your Git repository
 - Parse and manage semantic version tags (v1.0.0 format)
 - Increment version numbers (major, minor, or patch)
+- Automatically create annotated Git tags with incremented versions
 
 ## Features
 
 - **Git Integration**: Automatically reads from your local Git repository
 - **Semantic Versioning**: Supports standard semantic versioning format (v1.0.0)
 - **Version Incrementing**: Increment major, minor, or patch versions
-- **Commit Hash Retrieval**: Get the short hash of the last commit
+- **Automatic Tag Creation**: Creates annotated Git tags with incremented versions
+- **Commit Hash Retrieval**: Uses the current commit hash for tag creation
+- **Custom Tag Messages**: Add descriptive messages to your version tags
 
 ## Installation
 
@@ -42,22 +45,57 @@ go install github.com/kdawg500/larry@latest
 
 ### Basic Usage
 
-Run Larry from within a Git repository:
+Run Larry from within a Git repository to increment version numbers and create Git tags:
 
 ```bash
-./larry
+./larry increment <major|minor|patch>
 ```
 
-This will output:
+### Options
 
-- The incremented patch version of the last tag
-- The short hash of the last commit
+- `-m <message>`: Add a custom message to the created tag
+
+### Examples
+
+Increment the patch version (e.g., v1.0.0 → v1.0.1):
+
+```bash
+./larry increment patch
+```
+
+Increment the minor version (e.g., v1.0.0 → v1.1.0):
+
+```bash
+./larry increment minor
+```
+
+Increment the major version (e.g., v1.0.0 → v2.0.0):
+
+```bash
+./larry increment major
+```
+
+Create a tag with a custom message:
+
+```bash
+./larry increment patch -m "Bug fixes and improvements"
+```
+
+### What Larry Does
+
+When you run Larry, it will:
+
+1. Get the last Git tag from your repository
+2. Parse the semantic version from that tag
+3. Increment the specified version component (major, minor, or patch)
+4. Get the current commit hash
+5. Create a new annotated Git tag with the incremented version
+6. Output the new version string
 
 ### Example Output
 
-```
+```text
 v1.0.1
-a1b2c3
 ```
 
 ### Running Tests
@@ -68,7 +106,7 @@ go test ./...
 
 ### Project Structure
 
-```
+```text
 larry/
 ├── main.go              # Main application entry point
 ├── parse/
