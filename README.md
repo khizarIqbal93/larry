@@ -1,7 +1,7 @@
 # Larry
 
-<img src="https://i.redd.it/ty3qlu4swjle1.jpeg " alt="drawing" width="200"/>
-
+<!-- markdownlint-disable-next-line MD033 -->
+<img src="https://i.redd.it/ty3qlu4swjle1.jpeg" alt="A picture of Larry intently into your soul" width="220" />
 
 A simple Go tool for Git version management and semantic versioning operations.
 
