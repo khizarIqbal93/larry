@@ -1,5 +1,8 @@
 # Larry
 
+<img src="https://i.redd.it/ty3qlu4swjle1.jpeg " alt="drawing" width="200"/>
+
+
 A simple Go tool for Git version management and semantic versioning operations.
 
 ## Overview

@@ -11,7 +11,7 @@ import (
 func main() {
 	args := os.Args
 	if len(args) < 2 {
-		fmt.Println("Usage: larry increment <major|minor|patch>")
+		fmt.Println("Usage: larry increment <major|minor|patch> -m <message> (optional)")
 		os.Exit(1)
 	}
 
@@ -21,7 +21,7 @@ func main() {
 	action := args[2]
 
 	if action != "major" && action != "minor" && action != "patch" {
-		fmt.Println("Usage: larry increment <major|minor|patch>")
+		fmt.Println("Usage: larry increment <major|minor|patch> -m <message> (optional)")
 		os.Exit(1)
 	}
 
@@ -38,5 +38,5 @@ func main() {
 		tag.IncrementPatch(*messagePtr, commit)
 	}
 
-	fmt.Println(tag.String())
+	fmt.Printf("Tag created: %s\n for commit: %s\n", tag.String(), commit)
 }
