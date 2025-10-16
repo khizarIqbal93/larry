@@ -46,9 +46,7 @@ func (v *VersionTag) IncrementMinor(message, commitHash string) string {
 }
 
 func (v *VersionTag) IncrementPatch(message, commitHash string) string {
-	fmt.Println("Incrementing patch version: ", v.Patch)
 	v.Patch++
-	fmt.Println("New patch version: ", v.Patch)
 	cmd := exec.Command("git", "tag", "-a", v.String(), commitHash, "-m", fmt.Sprintf(`"%s"`, message))
 	output, err := cmd.CombinedOutput()
 	if err != nil {
@@ -96,9 +94,15 @@ func (g *GitTags) LastTag() VersionTag {
 	rawTagsStr := string(g.rawTags)
 	tags := strings.Split(string(rawTagsStr), "\n")
 	tags = tags[:len(tags)-1]
-	slices.Sort(tags)
-	fmt.Println("Tags: ", tags)
-	lastTag := tags[len(tags)-1]
+	if len(tags) == 0 {
+		return VersionTag{
+			Major: 0,
+			Minor: 0,
+			Patch: 0,
+		}
+	}
+	sortedTags := tagSort(tags)
+	lastTag := sortedTags[len(tags)-1]
 	t := Parse(lastTag)
 	return t
 }
@@ -133,5 +137,4 @@ func compare(a, b string) int {
 	}
 
 	return -1
-
 }
