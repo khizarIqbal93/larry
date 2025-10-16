@@ -27,7 +27,7 @@ func (v *VersionTag) String() string {
 
 func (v *VersionTag) IncrementMajor(message, commitHash string) string {
 	v.Major = v.Major + 1
-	cmd := exec.Command("git", "tag", "-a", v.String(), commitHash, "-m", fmt.Sprintf(`"%s"`, message))
+	cmd := exec.Command("git", "tag", "-a", v.String(), commitHash, "-m", message)
 	_, err := cmd.CombinedOutput()
 	if err != nil {
 		panic(err)
@@ -37,7 +37,7 @@ func (v *VersionTag) IncrementMajor(message, commitHash string) string {
 
 func (v *VersionTag) IncrementMinor(message, commitHash string) string {
 	v.Minor++
-	cmd := exec.Command("git", "tag", "-a", v.String(), commitHash, "-m", fmt.Sprintf(`"%s"`, message))
+	cmd := exec.Command("git", "tag", "-a", v.String(), commitHash, "-m", message)
 	_, err := cmd.CombinedOutput()
 	if err != nil {
 		panic(err)
@@ -47,7 +47,7 @@ func (v *VersionTag) IncrementMinor(message, commitHash string) string {
 
 func (v *VersionTag) IncrementPatch(message, commitHash string) string {
 	v.Patch++
-	cmd := exec.Command("git", "tag", "-a", v.String(), commitHash, "-m", fmt.Sprintf(`"%s"`, message))
+	cmd := exec.Command("git", "tag", "-a", v.String(), commitHash, "-m", message)
 	output, err := cmd.CombinedOutput()
 	if err != nil {
 		fmt.Println("Error creating tag: ", string(output))
