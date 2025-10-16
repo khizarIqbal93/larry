@@ -2,8 +2,10 @@ package parse
 
 import (
 	"fmt"
+	"os"
 	"os/exec"
 	"regexp"
+	"slices"
 	"strconv"
 	"strings"
 )
@@ -44,11 +46,14 @@ func (v *VersionTag) IncrementMinor(message, commitHash string) string {
 }
 
 func (v *VersionTag) IncrementPatch(message, commitHash string) string {
+	fmt.Println("Incrementing patch version: ", v.Patch)
 	v.Patch++
+	fmt.Println("New patch version: ", v.Patch)
 	cmd := exec.Command("git", "tag", "-a", v.String(), commitHash, "-m", fmt.Sprintf(`"%s"`, message))
-	_, err := cmd.CombinedOutput()
+	output, err := cmd.CombinedOutput()
 	if err != nil {
-		panic(err)
+		fmt.Println("Error creating tag: ", string(output))
+		os.Exit(128)
 	}
 	return v.String()
 }
@@ -90,7 +95,43 @@ func (g *GitTags) LastTag() VersionTag {
 	g.getTags()
 	rawTagsStr := string(g.rawTags)
 	tags := strings.Split(string(rawTagsStr), "\n")
-	lastTag := tags[len(tags)-2]
+	tags = tags[:len(tags)-1]
+	slices.Sort(tags)
+	fmt.Println("Tags: ", tags)
+	lastTag := tags[len(tags)-1]
 	t := Parse(lastTag)
 	return t
+}
+
+// sorts tags in ascending order
+//
+// v0.1.3, v0.1.4, v0.1.5 ...
+func tagSort(tags []string) []string {
+	slices.SortStableFunc(tags, func(a, b string) int {
+		return compare(a, b)
+	})
+	return tags
+}
+
+// Compares tag a and b. This adheres to semantic versioning vX.X.X, where v0.0.11 > v0.0.10
+//
+// Returns 1 if a > b otherwise returns -1
+func compare(a, b string) int {
+	tagA := Parse(a)
+	tagB := Parse(b)
+
+	if tagA.Major > tagB.Major {
+		return 1
+	}
+
+	if tagA.Major == tagB.Major && tagA.Minor > tagB.Minor {
+		return 1
+	}
+
+	if tagA.Minor == tagB.Minor && tagA.Patch > tagB.Patch {
+		return 1
+	}
+
+	return -1
+
 }
