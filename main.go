@@ -13,9 +13,11 @@ func main() {
 	flag.Parse()
 	args := flag.Args()
 
-	fmt.Println(args)
 	fmt.Println("message:", *messagePtr)
 	if len(args) < 2 {
+		lb, _ := os.ReadFile("larry.txt")
+		fmt.Println(string(lb))
+		fmt.Println("------------------------------------------------------------------")
 		fmt.Println("Usage: larry -m <message> (optional) increment <major|minor|patch>")
 		os.Exit(1)
 	}
