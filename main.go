@@ -1,6 +1,7 @@
 package main
 
 import (
+	_ "embed"
 	"flag"
 	"fmt"
 	"os"
@@ -8,14 +9,16 @@ import (
 	"github.com/kdawg500/larry/parse"
 )
 
+//go:embed larry.txt
+var larryAscii string
+
 func main() {
 	messagePtr := flag.String("m", "", "message for the tag")
 	flag.Parse()
 	args := flag.Args()
 
 	if len(args) < 2 {
-		lb, _ := os.ReadFile("larry.txt")
-		fmt.Println(string(lb))
+		fmt.Println(larryAscii)
 		fmt.Println("------------------------------------------------------------------")
 		fmt.Println("Usage: larry -m <message> (optional) increment <major|minor|patch>")
 		os.Exit(1)
