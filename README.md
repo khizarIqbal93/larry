@@ -81,7 +81,7 @@ Increment the major version (e.g., v1.0.0 → v2.0.0):
 Create a tag with a custom message:
 
 ```bash
-./larry increment patch -m "Bug fixes and improvements"
+./larry -m "Bug fixes and improvements" increment patch
 ```
 
 ### What Larry Does

@@ -9,19 +9,20 @@ import (
 )
 
 func main() {
-	args := os.Args
+	messagePtr := flag.String("m", "", "message for the tag")
+	flag.Parse()
+	args := flag.Args()
+
+	fmt.Println(args)
+	fmt.Println("message:", *messagePtr)
 	if len(args) < 2 {
-		fmt.Println("Usage: larry increment <major|minor|patch> -m <message> (optional)")
+		fmt.Println("Usage: larry -m <message> (optional) increment <major|minor|patch>")
 		os.Exit(1)
 	}
 
-	messagePtr := flag.String("m", "", "message for the tag")
-	flag.Parse()
-
-	action := args[2]
-
+	action := args[1]
 	if action != "major" && action != "minor" && action != "patch" {
-		fmt.Println("Usage: larry increment <major|minor|patch> -m <message> (optional)")
+		fmt.Println("Usage: larry -m <message> (optional) increment <major|minor|patch> ")
 		os.Exit(1)
 	}
 
