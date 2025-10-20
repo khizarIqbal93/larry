@@ -40,6 +40,14 @@ go build -o larry main.go
 
 ### Install Globally
 
+Make sure your GOBIN and PATH variables are set up correctly:
+
+Add this to your .zshrc/.bashrc
+
+```sh
+export PATH="$PATH:$HOME/go/bin"
+```
+
 ```bash
 go install github.com/kdawg500/larry@latest
 ```
