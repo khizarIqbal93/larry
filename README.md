@@ -51,7 +51,7 @@ go install github.com/kdawg500/larry@latest
 Run Larry from within a Git repository to increment version numbers and create Git tags:
 
 ```bash
-./larry increment <major|minor|patch>
+larry increment <major|minor|patch>
 ```
 
 ### Options
@@ -63,25 +63,25 @@ Run Larry from within a Git repository to increment version numbers and create G
 Increment the patch version (e.g., v1.0.0 → v1.0.1):
 
 ```bash
-./larry increment patch
+larry increment patch
 ```
 
 Increment the minor version (e.g., v1.0.0 → v1.1.0):
 
 ```bash
-./larry increment minor
+larry increment minor
 ```
 
 Increment the major version (e.g., v1.0.0 → v2.0.0):
 
 ```bash
-./larry increment major
+larry increment major
 ```
 
 Create a tag with a custom message:
 
 ```bash
-./larry -m "Bug fixes and improvements" increment patch
+larry -m "Bug fixes and improvements" increment patch
 ```
 
 ### What Larry Does
