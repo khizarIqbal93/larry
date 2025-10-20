@@ -30,9 +30,10 @@ func (v *VersionTag) IncrementMajor(message, commitHash string) string {
 	v.Minor = 0
 	v.Patch = 0
 	cmd := exec.Command("git", "tag", "-a", v.String(), commitHash, "-m", message)
-	_, err := cmd.CombinedOutput()
+	output, err := cmd.CombinedOutput()
 	if err != nil {
-		panic(err)
+		fmt.Println("Error creating tag: ", string(output))
+		os.Exit(128)
 	}
 	return v.String()
 }
@@ -41,9 +42,10 @@ func (v *VersionTag) IncrementMinor(message, commitHash string) string {
 	v.Minor++
 	v.Patch = 0
 	cmd := exec.Command("git", "tag", "-a", v.String(), commitHash, "-m", message)
-	_, err := cmd.CombinedOutput()
+	output, err := cmd.CombinedOutput()
 	if err != nil {
-		panic(err)
+		fmt.Println("Error creating tag: ", string(output))
+		os.Exit(128)
 	}
 	return v.String()
 }
