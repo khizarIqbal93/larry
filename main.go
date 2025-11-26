@@ -31,6 +31,16 @@ func main() {
 		os.Exit(1)
 	}
 
+	logs := parse.GitLogs{}
+	tags := parse.GitTags{}
+	commit := logs.LastCommitHash()
+	tag := tags.LastTag()
+
+	if args[0] == "version" {
+		fmt.Println(tag.String())
+		return
+	}
+
 	if len(args) < 2 {
 		fmt.Println(larryAscii)
 		fmt.Println("------------------------------------------------------------------")
@@ -44,10 +54,6 @@ func main() {
 		os.Exit(1)
 	}
 
-	logs := parse.GitLogs{}
-	tags := parse.GitTags{}
-	commit := logs.LastCommitHash()
-	tag := tags.LastTag()
 	switch action {
 	case MAJOR:
 		tag.IncrementMajor(*messagePtr, commit)

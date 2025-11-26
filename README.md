@@ -101,12 +101,13 @@ When you run Larry, it will:
 3. Increment the specified version component (major, minor, or patch)
 4. Get the current commit hash
 5. Create a new annotated Git tag with the incremented version
-6. Output the new version string
+6. Output the new version string (copied to your clipboard)
 
 ### Example Output
 
 ```text
-v1.0.1
+Tag created: v0.2.9
+for commit: 1e0a54
 ```
 
 ### Running Tests
