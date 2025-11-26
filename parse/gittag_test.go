@@ -21,13 +21,13 @@ func TestTagSort(t *testing.T) {
 	}{
 		{
 			Name:     "Already in order",
-			Input:    []string{"v0.0.1", "v0.0.2"},
-			Expected: []string{"v0.0.1", "v0.0.2"},
+			Input:    []string{"v0.0.1", "v0.0.2", "vsomething"},
+			Expected: []string{"vsomething", "v0.0.1", "v0.0.2"},
 		},
 		{
 			Name:     "Simple unordered tag list",
-			Input:    []string{"v0.0.2", "v0.0.1"},
-			Expected: []string{"v0.0.1", "v0.0.2"},
+			Input:    []string{"v0.0.2", "vsomething", "v0.0.1"},
+			Expected: []string{"vsomething", "v0.0.1", "v0.0.2"},
 		},
 		{
 			Name:     "Patch tag > 9",

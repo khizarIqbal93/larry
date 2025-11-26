@@ -6,16 +6,30 @@ import (
 	"fmt"
 	"os"
 
+	"github.com/fatih/color"
 	"github.com/kdawg500/larry/parse"
+	"golang.design/x/clipboard"
 )
 
 //go:embed larry.txt
 var larryAscii string
 
+const (
+	MAJOR = "major"
+	MINOR = "minor"
+	PATCH = "patch"
+)
+
 func main() {
 	messagePtr := flag.String("m", "", "message for the tag")
 	flag.Parse()
 	args := flag.Args()
+
+	err := clipboard.Init()
+	if err != nil {
+		fmt.Println(err.Error())
+		os.Exit(1)
+	}
 
 	if len(args) < 2 {
 		fmt.Println(larryAscii)
@@ -25,7 +39,7 @@ func main() {
 	}
 
 	action := args[1]
-	if action != "major" && action != "minor" && action != "patch" {
+	if action != MAJOR && action != MINOR && action != PATCH {
 		fmt.Println("Usage: larry -m <message> (optional) increment <major|minor|patch> ")
 		os.Exit(1)
 	}
@@ -35,13 +49,14 @@ func main() {
 	commit := logs.LastCommitHash()
 	tag := tags.LastTag()
 	switch action {
-	case "major":
+	case MAJOR:
 		tag.IncrementMajor(*messagePtr, commit)
-	case "minor":
+	case MINOR:
 		tag.IncrementMinor(*messagePtr, commit)
-	case "patch":
+	case PATCH:
 		tag.IncrementPatch(*messagePtr, commit)
 	}
 
-	fmt.Printf("Tag created: %s\n for commit: %s\n", tag.String(), commit)
+	color.Cyan("Tag created: %s \nfor commit: %s", tag.String(), commit)
+	clipboard.Write(clipboard.FmtText, []byte(commit))
 }
