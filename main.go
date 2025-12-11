@@ -64,5 +64,5 @@ func main() {
 	}
 
 	color.Cyan("Tag created: %s \nfor commit: %s", tag.String(), commit)
-	clipboard.Write(clipboard.FmtText, []byte(commit))
+	clipboard.Write(clipboard.FmtText, []byte(tag.String()))
 }
