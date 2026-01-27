@@ -3,6 +3,7 @@ module github.com/kdawg500/larry
 go 1.24.1
 
 require (
+	github.com/BurntSushi/toml v1.6.0
 	github.com/fatih/color v1.18.0
 	github.com/stretchr/testify v1.11.1
 	golang.design/x/clipboard v0.7.1

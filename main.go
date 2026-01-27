@@ -7,7 +7,7 @@ import (
 	"os"
 
 	"github.com/fatih/color"
-	"github.com/kdawg500/larry/parse"
+	"github.com/kdawg500/larry/gitutils"
 	"golang.design/x/clipboard"
 )
 
@@ -22,6 +22,7 @@ const (
 
 func main() {
 	messagePtr := flag.String("m", "", "message for the tag")
+	// uvPtr := flag.Bool("uv", false, "option to update version in pyproject.toml in uv projects")
 	flag.Parse()
 	args := flag.Args()
 
@@ -31,8 +32,8 @@ func main() {
 		os.Exit(1)
 	}
 
-	logs := parse.GitLogs{}
-	tags := parse.GitTags{}
+	logs := gitutils.GitLogs{}
+	tags := gitutils.GitTags{}
 	commit := logs.LastCommitHash()
 	tag := tags.LastTag()
 
@@ -56,11 +57,11 @@ func main() {
 
 	switch action {
 	case MAJOR:
-		tag.IncrementMajor(*messagePtr, commit)
+		tag.IncrementMajor().AddGitTag(*messagePtr, commit)
 	case MINOR:
-		tag.IncrementMinor(*messagePtr, commit)
+		tag.IncrementMinor().AddGitTag(*messagePtr, commit)
 	case PATCH:
-		tag.IncrementPatch(*messagePtr, commit)
+		tag.IncrementPatch().AddGitTag(*messagePtr, commit)
 	}
 
 	color.Cyan("Tag created: %s \nfor commit: %s", tag.String(), commit)

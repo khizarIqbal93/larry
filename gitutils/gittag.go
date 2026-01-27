@@ -1,4 +1,4 @@
-package parse
+package gitutils
 
 import (
 	"fmt"
@@ -25,43 +25,34 @@ func (v *VersionTag) String() string {
 	return fmt.Sprintf("v%d.%d.%d", v.Major, v.Minor, v.Patch)
 }
 
-func (v *VersionTag) IncrementMajor(message, commitHash string) string {
+func (v *VersionTag) AddGitTag(message, commitHash string) {
+	cmd := exec.Command("git", "tag", "-a", v.String(), commitHash, "-m", message)
+	output, err := cmd.CombinedOutput()
+	if err != nil {
+		fmt.Println("Error creating tag: ", string(output))
+		os.Exit(128)
+	}
+}
+
+func (v *VersionTag) IncrementMajor() *VersionTag {
 	v.Major = v.Major + 1
 	v.Minor = 0
 	v.Patch = 0
-	cmd := exec.Command("git", "tag", "-a", v.String(), commitHash, "-m", message)
-	output, err := cmd.CombinedOutput()
-	if err != nil {
-		fmt.Println("Error creating tag: ", string(output))
-		os.Exit(128)
-	}
-	return v.String()
+	return v
 }
 
-func (v *VersionTag) IncrementMinor(message, commitHash string) string {
+func (v *VersionTag) IncrementMinor() *VersionTag {
 	v.Minor++
 	v.Patch = 0
-	cmd := exec.Command("git", "tag", "-a", v.String(), commitHash, "-m", message)
-	output, err := cmd.CombinedOutput()
-	if err != nil {
-		fmt.Println("Error creating tag: ", string(output))
-		os.Exit(128)
-	}
-	return v.String()
+	return v
 }
 
-func (v *VersionTag) IncrementPatch(message, commitHash string) string {
+func (v *VersionTag) IncrementPatch() *VersionTag {
 	v.Patch++
-	cmd := exec.Command("git", "tag", "-a", v.String(), commitHash, "-m", message)
-	output, err := cmd.CombinedOutput()
-	if err != nil {
-		fmt.Println("Error creating tag: ", string(output))
-		os.Exit(128)
-	}
-	return v.String()
+	return v
 }
 
-func Parse(tag string) VersionTag {
+func ParseTag(tag string) VersionTag {
 	res := VersionTag{}
 	re := regexp.MustCompile(`^v\d+\.\d+\.\d+$`)
 	if re.MatchString(tag) {
@@ -108,7 +99,7 @@ func (g *GitTags) LastTag() VersionTag {
 	}
 	sortedTags := tagSort(tags)
 	lastTag := sortedTags[len(tags)-1]
-	t := Parse(lastTag)
+	t := ParseTag(lastTag)
 	return t
 }
 
@@ -126,8 +117,8 @@ func tagSort(tags []string) []string {
 //
 // Returns 1 if a > b otherwise returns -1
 func compare(a, b string) int {
-	tagA := Parse(a)
-	tagB := Parse(b)
+	tagA := ParseTag(a)
+	tagB := ParseTag(b)
 
 	if tagA.Major > tagB.Major {
 		return 1

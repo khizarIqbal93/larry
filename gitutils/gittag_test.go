@@ -1,4 +1,4 @@
-package parse
+package gitutils
 
 import (
 	"testing"
@@ -7,7 +7,7 @@ import (
 )
 
 func TestParse(t *testing.T) {
-	actual := Parse("v1.0.0")
+	actual := ParseTag("v1.0.0")
 	assert.Equal(t, 1, actual.Major)
 	assert.Equal(t, 0, actual.Minor)
 	assert.Equal(t, 0, actual.Patch)

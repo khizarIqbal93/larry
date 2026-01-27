@@ -1,4 +1,4 @@
-package parse
+package gitutils
 
 import (
 	"os/exec"
