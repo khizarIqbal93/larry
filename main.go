@@ -8,6 +8,7 @@ import (
 
 	"github.com/fatih/color"
 	"github.com/kdawg500/larry/gitutils"
+	"github.com/kdawg500/larry/uv"
 	"golang.design/x/clipboard"
 )
 
@@ -22,7 +23,7 @@ const (
 
 func main() {
 	messagePtr := flag.String("m", "", "message for the tag")
-	// uvPtr := flag.Bool("uv", false, "option to update version in pyproject.toml in uv projects")
+	uvPtr := flag.Bool("uv", false, "option to update version in pyproject.toml in uv projects")
 	flag.Parse()
 	args := flag.Args()
 
@@ -62,6 +63,29 @@ func main() {
 		tag.IncrementMinor().AddGitTag(*messagePtr, commit)
 	case PATCH:
 		tag.IncrementPatch().AddGitTag(*messagePtr, commit)
+	}
+
+	if *uvPtr {
+		pyprojectPath := "pyproject.toml"
+		if _, err := os.Stat(pyprojectPath); os.IsNotExist(err) {
+			color.Red("pyproject.toml not found in current directory")
+			os.Exit(1)
+		}
+
+		content, err := os.ReadFile(pyprojectPath)
+		if err != nil {
+			color.Red("Failed to read pyproject.toml: %s", err.Error())
+			os.Exit(1)
+		}
+
+		updatedContent := uv.UpdateUvVersion(string(content), tag.String())
+		err = os.WriteFile(pyprojectPath, []byte(updatedContent), 0644)
+		if err != nil {
+			color.Red("Failed to write pyproject.toml: %s", err.Error())
+			os.Exit(1)
+		}
+
+		color.Green("Updated version in pyproject.toml")
 	}
 
 	color.Cyan("Tag created: %s \nfor commit: %s", tag.String(), commit)

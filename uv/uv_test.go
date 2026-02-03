@@ -19,8 +19,7 @@ func TestUpdate(t *testing.T) {
 	rawTOML, err := os.ReadFile("pyproject.toml")
 	assert.NoError(t, err)
 
-	actual := UpdateUvVersion(string(rawTOML), "patch")
-	os.WriteFile("cuh.toml", []byte(actual), 0644)
+	actual := UpdateUvVersion(string(rawTOML), "v0.1.1")
 	p := parse(actual)
 	tag := getUVVersion(p)
 	assert.Equal(t, "v0.1.1", tag.String())

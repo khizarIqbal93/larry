@@ -1,7 +1,6 @@
 package uv
 
 import (
-	"fmt"
 	"regexp"
 	"strings"
 
@@ -27,21 +26,9 @@ func getUVVersion(parsedTOML map[string]any) gitutils.VersionTag {
 	return tag
 }
 
-func UpdateUvVersion(rawTOML, increment string) string {
-	parsed := parse(rawTOML)
-	tag := getUVVersion(parsed)
-	switch increment {
-	case "major":
-		tag.IncrementMajor()
-	case "minor":
-		tag.IncrementMinor()
-	case "patch":
-		tag.IncrementPatch()
-	}
-
-	newVersion := strings.TrimPrefix(tag.String(), "v")
+func UpdateUvVersion(rawTOML, updatedTag string) string {
+	newVersion := strings.TrimPrefix(updatedTag, "v")
 	re := regexp.MustCompile(`(?m)^(version\s*=\s*")([^"]+)(")`)
 	updatedTOML := re.ReplaceAllString(rawTOML, "${1}"+newVersion+"${3}")
-	fmt.Println(updatedTOML)
 	return updatedTOML
 }
