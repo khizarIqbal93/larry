@@ -1,6 +1,10 @@
 package uv
 
 import (
+	"fmt"
+	"regexp"
+	"strings"
+
 	"github.com/BurntSushi/toml"
 	"github.com/kdawg500/larry/gitutils"
 )
@@ -35,12 +39,9 @@ func UpdateUvVersion(rawTOML, increment string) string {
 		tag.IncrementPatch()
 	}
 
-	parsed["project"].(map[string]any)["version"] = tag.String()
-	updatedToml, err := toml.Marshal(parsed)
-	if err != nil {
-		panic(err.Error())
-	}
-
-	return string(updatedToml)
-
+	newVersion := strings.TrimPrefix(tag.String(), "v")
+	re := regexp.MustCompile(`(?m)^(version\s*=\s*")([^"]+)(")`)
+	updatedTOML := re.ReplaceAllString(rawTOML, "${1}"+newVersion+"${3}")
+	fmt.Println(updatedTOML)
+	return updatedTOML
 }

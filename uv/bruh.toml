@@ -1,7 +1,0 @@
-[project]
-  dependencies = ["aiohttp>=3.13.2", "azure-storage-blob>=12.27.1", "fastapi[standard]>=0.125.0", "python-dotenv>=1.2.1"]
-  description = "Add your description here"
-  name = "nesoai-utils-api"
-  readme = "README.md"
-  requires-python = ">=3.14"
-  version = "v0.1.1"
