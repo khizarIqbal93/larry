@@ -33,7 +33,7 @@ Larry is a command-line utility that helps developers manage Git tags and versio
 ### Build from Source
 
 ```bash
-git clone https://github.com/kdawg500/larry.git
+git clone git@github.com:clear-route/larry.git
 cd larry
 go build -o larry main.go
 ```
@@ -49,7 +49,7 @@ export PATH="$PATH:$HOME/go/bin"
 ```
 
 ```bash
-go install github.com/kdawg500/larry@latest
+go install github.com/clear-route/larry.git
 ```
 
 ## Usage
