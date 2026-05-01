@@ -25,6 +25,7 @@ func main() {
 	messagePtr := flag.String("m", "", "message for the tag")
 	uvPtr := flag.Bool("uv", false, "option to update version in pyproject.toml in uv projects")
 	flag.Parse()
+
 	args := flag.Args()
 
 	err := clipboard.Init()
@@ -35,8 +36,25 @@ func main() {
 
 	logs := gitutils.GitLogs{}
 	tags := gitutils.GitTags{}
-	commit := logs.LastCommitHash()
-	tag := tags.LastTag()
+
+	commit, err := logs.LastCommitHash()
+	if err != nil {
+		color.Red(err.Error())
+		os.Exit(1)
+	}
+
+	tag, err := tags.LastTag()
+	if err != nil {
+		color.Red(err.Error())
+		os.Exit(1)
+	}
+
+	if len(args) == 0 {
+		fmt.Println(larryAscii)
+		fmt.Println("------------------------------------------------------------------")
+		fmt.Println("Usage: larry -m <message> (optional) increment <major|minor|patch>")
+		os.Exit(1)
+	}
 
 	if args[0] == "version" {
 		fmt.Println(tag.String())
@@ -58,11 +76,15 @@ func main() {
 
 	switch action {
 	case MAJOR:
-		tag.IncrementMajor().AddGitTag(*messagePtr, commit)
+		err = tag.IncrementMajor().AddGitTag(*messagePtr, commit)
 	case MINOR:
-		tag.IncrementMinor().AddGitTag(*messagePtr, commit)
+		err = tag.IncrementMinor().AddGitTag(*messagePtr, commit)
 	case PATCH:
-		tag.IncrementPatch().AddGitTag(*messagePtr, commit)
+		err = tag.IncrementPatch().AddGitTag(*messagePtr, commit)
+	}
+	if err != nil {
+		color.Red(err.Error())
+		os.Exit(1)
 	}
 
 	if *uvPtr {

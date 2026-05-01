@@ -1,6 +1,7 @@
 package gitutils
 
 import (
+	"fmt"
 	"os/exec"
 	"strings"
 )
@@ -11,19 +12,28 @@ type GitLogs struct {
 }
 
 // gets the logs from the git repository
-func (g *GitLogs) getLogs() {
+func (g *GitLogs) getLogs() error {
 	cmd := exec.Command("git", "log")
 	bLogs, err := cmd.CombinedOutput()
 	if err != nil {
-		panic(err)
+		return fmt.Errorf("git log failed: %w", err)
 	}
 	g.rawLogs = bLogs
+	return nil
 }
 
 // returns the short hash of the last commit
-func (g *GitLogs) LastCommitHash() string {
-	g.getLogs()
+func (g *GitLogs) LastCommitHash() (string, error) {
+	if err := g.getLogs(); err != nil {
+		return "", err
+	}
 	logLines := strings.Split(string(g.rawLogs), "\n")
-	commitHash := strings.Split(logLines[0], " ")
-	return commitHash[1][:6]
+	if len(logLines) == 0 {
+		return "", fmt.Errorf("no commits found")
+	}
+	parts := strings.Split(logLines[0], " ")
+	if len(parts) < 2 || len(parts[1]) < 6 {
+		return "", fmt.Errorf("unexpected git log format: %q", logLines[0])
+	}
+	return parts[1][:6], nil
 }

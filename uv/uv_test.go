@@ -10,8 +10,10 @@ import (
 func TestGetUVVersion(t *testing.T) {
 	rawTOML, err := os.ReadFile("pyproject.toml")
 	assert.NoError(t, err)
-	p := parse(string(rawTOML))
-	tag := getUVVersion(p)
+	p, err := parse(string(rawTOML))
+	assert.NoError(t, err)
+	tag, err := getUVVersion(p)
+	assert.NoError(t, err)
 	assert.Equal(t, "v0.1.0", tag.String())
 }
 
@@ -20,7 +22,9 @@ func TestUpdate(t *testing.T) {
 	assert.NoError(t, err)
 
 	actual := UpdateUvVersion(string(rawTOML), "v0.1.1")
-	p := parse(actual)
-	tag := getUVVersion(p)
+	p, err := parse(actual)
+	assert.NoError(t, err)
+	tag, err := getUVVersion(p)
+	assert.NoError(t, err)
 	assert.Equal(t, "v0.1.1", tag.String())
 }

@@ -7,7 +7,8 @@ import (
 )
 
 func TestParse(t *testing.T) {
-	actual := ParseTag("v1.0.0")
+	actual, err := ParseTag("v1.0.0")
+	assert.NoError(t, err)
 	assert.Equal(t, 1, actual.Major)
 	assert.Equal(t, 0, actual.Minor)
 	assert.Equal(t, 0, actual.Patch)

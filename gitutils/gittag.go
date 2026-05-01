@@ -2,7 +2,6 @@ package gitutils
 
 import (
 	"fmt"
-	"os"
 	"os/exec"
 	"regexp"
 	"slices"
@@ -25,13 +24,13 @@ func (v *VersionTag) String() string {
 	return fmt.Sprintf("v%d.%d.%d", v.Major, v.Minor, v.Patch)
 }
 
-func (v *VersionTag) AddGitTag(message, commitHash string) {
+func (v *VersionTag) AddGitTag(message, commitHash string) error {
 	cmd := exec.Command("git", "tag", "-a", v.String(), commitHash, "-m", message)
 	output, err := cmd.CombinedOutput()
 	if err != nil {
-		fmt.Println("Error creating tag: ", string(output))
-		os.Exit(128)
+		return fmt.Errorf("failed to create tag: %s", strings.TrimSpace(string(output)))
 	}
+	return nil
 }
 
 func (v *VersionTag) IncrementMajor() *VersionTag {
@@ -52,55 +51,59 @@ func (v *VersionTag) IncrementPatch() *VersionTag {
 	return v
 }
 
-func ParseTag(tag string) VersionTag {
-	res := VersionTag{}
+func ParseTag(tag string) (VersionTag, error) {
 	re := regexp.MustCompile(`^v\d+\.\d+\.\d+$`)
-	if re.MatchString(tag) {
-		segments := strings.Split(strings.TrimPrefix(tag, "v"), ".")
-		var err error
-		res.Major, err = strconv.Atoi(segments[0])
-		if err != nil {
-			panic(err)
-		}
-		res.Minor, err = strconv.Atoi(segments[1])
-		if err != nil {
-			panic(err)
-		}
-		res.Patch, err = strconv.Atoi(segments[2])
-		if err != nil {
-			panic(err)
-		}
+	if !re.MatchString(tag) {
+		return VersionTag{}, fmt.Errorf("invalid tag format: %q", tag)
 	}
-	return res
+	segments := strings.Split(strings.TrimPrefix(tag, "v"), ".")
+	major, err := strconv.Atoi(segments[0])
+	if err != nil {
+		return VersionTag{}, err
+	}
+	minor, err := strconv.Atoi(segments[1])
+	if err != nil {
+		return VersionTag{}, err
+	}
+	patch, err := strconv.Atoi(segments[2])
+	if err != nil {
+		return VersionTag{}, err
+	}
+	return VersionTag{Major: major, Minor: minor, Patch: patch}, nil
 }
 
 // gets the tags from the git repository
-func (g *GitTags) getTags() {
+func (g *GitTags) getTags() error {
 	cmd := exec.Command("git", "tag")
 	bTags, err := cmd.CombinedOutput()
 	if err != nil {
-		panic(err)
+		return fmt.Errorf("git tag failed: %w", err)
 	}
 	g.rawTags = bTags
+	return nil
 }
 
 // returns the last tag
-func (g *GitTags) LastTag() VersionTag {
-	g.getTags()
-	rawTagsStr := string(g.rawTags)
-	tags := strings.Split(string(rawTagsStr), "\n")
-	tags = tags[:len(tags)-1]
-	if len(tags) == 0 {
-		return VersionTag{
-			Major: 0,
-			Minor: 0,
-			Patch: 0,
+func (g *GitTags) LastTag() (VersionTag, error) {
+	if err := g.getTags(); err != nil {
+		return VersionTag{}, err
+	}
+	raw := strings.TrimSpace(string(g.rawTags))
+	if raw == "" {
+		return VersionTag{}, nil
+	}
+	tags := strings.Split(raw, "\n")
+	var valid []string
+	for _, t := range tags {
+		if _, err := ParseTag(t); err == nil {
+			valid = append(valid, t)
 		}
 	}
-	sortedTags := tagSort(tags)
-	lastTag := sortedTags[len(tags)-1]
-	t := ParseTag(lastTag)
-	return t
+	if len(valid) == 0 {
+		return VersionTag{}, nil
+	}
+	sorted := tagSort(valid)
+	return ParseTag(sorted[len(sorted)-1])
 }
 
 // sorts tags in ascending order
@@ -117,8 +120,8 @@ func tagSort(tags []string) []string {
 //
 // Returns 1 if a > b otherwise returns -1
 func compare(a, b string) int {
-	tagA := ParseTag(a)
-	tagB := ParseTag(b)
+	tagA, _ := ParseTag(a)
+	tagB, _ := ParseTag(b)
 
 	if tagA.Major > tagB.Major {
 		return 1

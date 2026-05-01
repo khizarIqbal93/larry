@@ -1,6 +1,7 @@
 package uv
 
 import (
+	"fmt"
 	"regexp"
 	"strings"
 
@@ -8,22 +9,24 @@ import (
 	"github.com/kdawg500/larry/gitutils"
 )
 
-func parse(rawTOML string) map[string]any {
+func parse(rawTOML string) (map[string]any, error) {
 	var pyProjectTOML map[string]any
-	// var pyProjectTOML PyProjectTOML
-	_, err := toml.Decode(rawTOML, &pyProjectTOML)
-	if err != nil {
-		panic(err.Error())
+	if _, err := toml.Decode(rawTOML, &pyProjectTOML); err != nil {
+		return nil, fmt.Errorf("failed to parse TOML: %w", err)
 	}
-
-	return pyProjectTOML
+	return pyProjectTOML, nil
 }
 
-func getUVVersion(parsedTOML map[string]any) gitutils.VersionTag {
-	version := parsedTOML["project"].(map[string]any)["version"].(string)
-	version = "v" + version
-	tag := gitutils.ParseTag(version)
-	return tag
+func getUVVersion(parsedTOML map[string]any) (gitutils.VersionTag, error) {
+	project, ok := parsedTOML["project"].(map[string]any)
+	if !ok {
+		return gitutils.VersionTag{}, fmt.Errorf("missing [project] table in pyproject.toml")
+	}
+	version, ok := project["version"].(string)
+	if !ok {
+		return gitutils.VersionTag{}, fmt.Errorf("missing version field in [project]")
+	}
+	return gitutils.ParseTag("v" + version)
 }
 
 func UpdateUvVersion(rawTOML, updatedTag string) string {
