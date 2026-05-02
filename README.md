@@ -49,7 +49,7 @@ export PATH="$PATH:$HOME/go/bin"
 ```
 
 ```bash
-go install github.com/clear-route/larry.git
+go install github.com/khizarIqbal93/larry@latest
 ```
 
 ## Usage

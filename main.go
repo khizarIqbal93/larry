@@ -7,8 +7,8 @@ import (
 	"os"
 
 	"github.com/fatih/color"
-	"github.com/kdawg500/larry/gitutils"
-	"github.com/kdawg500/larry/uv"
+	"github.com/khizarIqbal93/larry/gitutils"
+	"github.com/khizarIqbal93/larry/uv"
 	"golang.design/x/clipboard"
 )
 

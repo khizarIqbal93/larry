@@ -6,7 +6,7 @@ import (
 	"strings"
 
 	"github.com/BurntSushi/toml"
-	"github.com/kdawg500/larry/gitutils"
+	"github.com/khizarIqbal93/larry/gitutils"
 )
 
 func parse(rawTOML string) (map[string]any, error) {
