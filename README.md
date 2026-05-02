@@ -135,4 +135,4 @@ This project is open source and available under the [MIT License](LICENSE).
 
 ## Author
 
-Created by [kdawg500](https://github.com/kdawg500)
+Created by [khizarIqbal93](https://github.com/khizarIqbal93)
